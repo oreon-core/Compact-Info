@@ -1,0 +1,11 @@
+{
+  "category.compactinfo": "Compact Info",
+  "hud.title.elements": "Відображення елементів",
+  "key.compactinfo.toggle_hud": "Перемкнути HUD",
+  "key.compactinfo.open_hud_config": "Конфіг",
+  "hud.option.coords": "Координати",
+  "hud.option.converted": "Конвертер",
+  "hud.option.biome": "Біом",
+  "hud.option.fps": "FPS",
+  "hud.option.back": "Закрити"
+}

@@ -1,0 +1,11 @@
+{
+  "category.compactinfo": "Compact Info",
+  "hud.title.elements": "Display Elements",
+  "key.compactinfo.toggle_hud": "Toggle HUD",
+  "key.compactinfo.open_hud_config": "Config",
+  "hud.option.coords": "Coordinates",
+  "hud.option.converted": "Converted",
+  "hud.option.biome": "Biome",
+  "hud.option.fps": "FPS",
+  "hud.option.back": "Back"
+}

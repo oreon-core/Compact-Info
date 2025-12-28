@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "id": "compact-info",
+  "version": "${version}",
+  "name": "CompactInfo",
+  "description": "Compact F3 display",
+  "authors": [
+    "oreon core"
+  ],
+  "contact": {
+    "sources": "https://github.com/oreon-core/Compact-Info"
+  },
+  "license": "MIT",
+  "icon": "assets/compact-info/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.compactinfo.CompactInfo"
+    ],
+    "client": [
+      "com.compactinfo.CompactInfoClient"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.17.2",
+    "minecraft": "~1.21.8",
+    "java": ">=21",
+    "fabric-api": "*"
+  },
+  "suggests": {
+    "another-mod": "*"
+  }
+}
