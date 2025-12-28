@@ -1,5 +1,5 @@
 {
-  "category.compactinfo": "Compact Info",
+  "key.category.compactinfo.keybind_category": "Compact Info",
   "hud.title.elements": "Display Elements",
   "key.compactinfo.toggle_hud": "Toggle HUD",
   "key.compactinfo.open_hud_config": "Config",
