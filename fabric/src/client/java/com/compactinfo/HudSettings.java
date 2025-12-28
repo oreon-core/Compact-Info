@@ -9,9 +9,11 @@ public class HudSettings {
     private static HudSettings instance;
 
     private boolean showCoords = true;
-    private boolean showConv = true;
-    private boolean showBiome = true;
+    private boolean showConv = false;
+    private boolean showBiome = false;
     private boolean showFPS = true;
+    private boolean showDays = false;
+    private boolean showMemory = false;
 
     private final File configFile;
 
@@ -45,15 +47,24 @@ public class HudSettings {
     public boolean showFPS() { return showFPS; }
     public void setShowFPS(boolean value) { showFPS = value; }
 
+
+    public boolean showDays() { return showDays; }
+    public void setShowDays(boolean value) { showDays = value; }
+
+    public boolean showMemory() { return showMemory; }
+    public void setShowMemory(boolean value) { showMemory = value; }
+
     public void load() {
         if (!configFile.exists()) return;
         try (InputStream in = new FileInputStream(configFile)) {
             Properties props = new Properties();
             props.load(in);
             showCoords = Boolean.parseBoolean(props.getProperty("showCoords", "true"));
-            showConv = Boolean.parseBoolean(props.getProperty("showConv", "true"));
-            showBiome = Boolean.parseBoolean(props.getProperty("showBiome", "true"));
+            showConv = Boolean.parseBoolean(props.getProperty("showConv", "false"));
+            showBiome = Boolean.parseBoolean(props.getProperty("showBiome", "false"));
             showFPS = Boolean.parseBoolean(props.getProperty("showFPS", "true"));
+            showDays = Boolean.parseBoolean(props.getProperty("showDays", "false"));
+            showMemory = Boolean.parseBoolean(props.getProperty("showMemory", "false"));
             hudScale = Float.parseFloat(props.getProperty("hudScale", "1.0"));
         } catch (IOException | NumberFormatException e) {
             e.printStackTrace();
@@ -67,6 +78,8 @@ public class HudSettings {
             props.setProperty("showConv", Boolean.toString(showConv));
             props.setProperty("showBiome", Boolean.toString(showBiome));
             props.setProperty("showFPS", Boolean.toString(showFPS));
+            props.setProperty("showDays", Boolean.toString(showDays));
+            props.setProperty("showMemory", Boolean.toString(showMemory));
             props.setProperty("hudScale", Float.toString(hudScale));
             props.store(out, "Compact Info HUD Settings");
         } catch (IOException e) {

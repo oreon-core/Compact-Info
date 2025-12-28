@@ -19,6 +19,9 @@
     ],
     "client": [
       "com.compactinfo.CompactInfoClient"
+    ],
+    "modmenu": [
+      "com.compactinfo.ModMenuIntegration"
     ]
   },
   "depends": {
@@ -28,6 +31,8 @@
     "fabric-api": "*"
   },
   "suggests": {
-    "another-mod": "*"
+    "another-mod": "*",
+    "cloth-config": "*",
+    "modmenu": "*"
   }
 }
