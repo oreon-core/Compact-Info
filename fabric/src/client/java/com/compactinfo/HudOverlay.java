@@ -13,6 +13,11 @@ public class HudOverlay {
 
     private static final float FONT_SCALE = 1.0f;
 
+
+    private static long lastMemoryUpdateTime = 0;
+    private static final long MEMORY_UPDATE_INTERVAL = 60;
+    private static String cachedMemoryText = "RAM: 0MB";
+
     @SuppressWarnings("deprecation")
     public static void register() {
         HudRenderCallback.EVENT.register(HudOverlay::render);
@@ -23,7 +28,7 @@ public class HudOverlay {
     }
 
     private static void render(DrawContext ctx, RenderTickCounter tickCounter) {
-        if (!enabled || client.player == null || client.world == null) return;
+        if (!enabled || client.player == null || client.world == null || client.options.hudHidden) return;
 
         HudSettings settings = HudSettings.getInstance();
         float scale = settings.getHudScale();
@@ -68,15 +73,45 @@ public class HudOverlay {
             line += scaled(lineGap, scale);
         }
 
+
+        if (settings.showDays()) {
+            long time = client.world.getTimeOfDay();
+            long days = time / 24000L;
+            drawScaled(ctx, "Day: " + days, left, line, color, scale);
+            line += scaled(lineGap, scale);
+        }
+
         if (settings.showFPS()) {
             drawScaled(ctx, "FPS: " + fps, left, line, color, scale);
+            line += scaled(lineGap, scale);
         }
+
+
+        if (settings.showMemory()) {
+            long currentTime = System.currentTimeMillis();
+
+
+            if (currentTime - lastMemoryUpdateTime > MEMORY_UPDATE_INTERVAL) {
+                updateMemoryText();
+                lastMemoryUpdateTime = currentTime;
+            }
+
+            drawScaled(ctx, cachedMemoryText, left, line, color, scale);
+        }
+    }
+
+    private static void updateMemoryText() {
+        Runtime runtime = Runtime.getRuntime();
+        long totalMemory = runtime.totalMemory();
+        long freeMemory = runtime.freeMemory();
+        long usedMemory = totalMemory - freeMemory;
+
+        cachedMemoryText = String.format("RAM: %dMB", usedMemory / 1024 / 1024);
     }
 
     private static int scaled(int v, float scale) {
         return Math.max(1, (int) Math.floor(v * scale));
     }
-
 
     private static void drawScaled(DrawContext ctx, String s, int x, int y, int argb, float scale) {
         ctx.getMatrices().pushMatrix();

@@ -1,11 +1,14 @@
 {
   "category.compactinfo": "Compact Info",
-  "hud.title.elements": "Відображення елементів",
   "key.compactinfo.toggle_hud": "Перемкнути HUD",
-  "key.compactinfo.open_hud_config": "Конфіг",
-  "hud.option.coords": "Координати",
-  "hud.option.converted": "Конвертер",
-  "hud.option.biome": "Біом",
-  "hud.option.fps": "FPS",
-  "hud.option.back": "Закрити"
+  "key.compactinfo.open_hud_config": "Налаштування",
+  "hud.option.coords": "Показати координати",
+  "hud.option.converted": "Показати конвертовані координати",
+  "hud.option.biome": "Показати біом",
+  "hud.option.fps": "Показати FPS",
+  "hud.option.scale": "Масштаб HUD",
+  "screen.compactinfo.title": "Налаштування CompactInfo",
+  "modmenu.descriptionTranslation.compact-info": "Компактне відображення F3",
+  "hud.option.days": "Показати дні",
+  "hud.option.memory": "Показати ОЗУ"
 }
