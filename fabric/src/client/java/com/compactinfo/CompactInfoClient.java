@@ -7,5 +7,6 @@ public class CompactInfoClient implements ClientModInitializer {
     public void onInitializeClient() {
         HudOverlay.register();
         Keybinds.register();
+        CommandConfig.register();
     }
 }

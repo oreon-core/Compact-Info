@@ -11,10 +11,9 @@ import net.minecraft.util.Identifier;
 public final class Keybinds {
     private static KeyBinding toggleHudKey;
     private static KeyBinding openHudConfigKey;
-
+    private static KeyBinding copyCoordsKey;
 
     private static Boolean hasClothConfig = null;
-
 
     private static final KeyBinding.Category COMPACTINFO_CATEGORY =
             KeyBinding.Category.create(Identifier.of("compactinfo", "keybind_category"));
@@ -32,7 +31,6 @@ public final class Keybinds {
     }
 
     public static void register() {
-
         toggleHudKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "key.compactinfo.toggle_hud",
                 InputUtil.Type.KEYSYM,
@@ -47,8 +45,14 @@ public final class Keybinds {
                 COMPACTINFO_CATEGORY
         ));
 
-        ClientTickEvents.END_CLIENT_TICK.register(client -> {
+        copyCoordsKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+                "key.compactinfo.copy_coords",
+                InputUtil.Type.KEYSYM,
+                InputUtil.UNKNOWN_KEY.getCode(),
+                COMPACTINFO_CATEGORY
+        ));
 
+        ClientTickEvents.END_CLIENT_TICK.register(client -> {
             while (toggleHudKey.wasPressed()) {
                 HudOverlay.toggle();
             }
@@ -58,13 +62,18 @@ public final class Keybinds {
                     handleConfigScreen(client);
                 }
             }
+
+            while (copyCoordsKey.wasPressed()) {
+                if (client.player != null) {
+                    copyCoordinatesToClipboard(client);
+                }
+            }
         });
     }
 
     private static void handleConfigScreen(MinecraftClient client) {
         if (checkClothConfigAvailable()) {
             try {
-
                 client.setScreen(HudConfigScreen.createConfigScreen(client.currentScreen));
             } catch (Exception e) {
                 showMissingDependencyMessage(client);
@@ -74,10 +83,27 @@ public final class Keybinds {
         }
     }
 
+    private static void copyCoordinatesToClipboard(MinecraftClient client) {
+        if (client.player == null || client.world == null) return;
+
+        int x = (int) client.player.getX();
+        int y = (int) client.player.getY();
+        int z = (int) client.player.getZ();
+
+        String coords = String.format("%d %d %d", x, y, z);
+
+        client.keyboard.setClipboard(coords);
+
+        client.player.sendMessage(
+                Text.translatable("message.compactinfo.coords_copied", coords),
+                false
+        );
+    }
+
     private static void showMissingDependencyMessage(MinecraftClient client) {
         if (client.player != null) {
             client.player.sendMessage(
-                    Text.literal("§cCompactInfo requires Cloth Config to open configuration screen!"),
+                    Text.translatable("message.compactinfo.missing_cloth_config"),
                     false
             );
         }

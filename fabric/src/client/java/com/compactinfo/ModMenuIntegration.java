@@ -16,20 +16,21 @@ public class ModMenuIntegration implements ModMenuApi {
 
     @Override
     public ConfigScreenFactory<?> getModConfigScreenFactory() {
-
+        
         if (!checkClothConfigAvailable()) {
-
+           
             return null;
         }
 
-
+       
         return parent -> {
             try {
                 return HudConfigScreen.createConfigScreen(parent);
             } catch (Exception e) {
-
+                
                 return null;
             }
         };
     }
+
 }
