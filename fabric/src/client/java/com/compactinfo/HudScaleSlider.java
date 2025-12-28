@@ -11,7 +11,7 @@ public class HudScaleSlider extends SliderWidget {
     public HudScaleSlider(int x, int y, int width, int height, HudSettings settings) {
         super(x, y, width, height,
                 Text.literal("HUD Scale: " + String.format("%.2f", settings.getHudScale())),
-                normalize(settings.getHudScale()));
+                normalize(settings.getHudScale())); // value від 0 до 1
         this.settings = settings;
         this.updateMessage();
     }
