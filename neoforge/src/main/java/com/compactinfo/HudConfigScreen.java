@@ -13,6 +13,8 @@ public class HudConfigScreen {
     public static final ModConfigSpec.BooleanValue SHOW_FPS;
     public static final ModConfigSpec.BooleanValue SHOW_MEMORY;
     public static final ModConfigSpec.DoubleValue HUD_SCALE;
+    public static final ModConfigSpec.IntValue HUD_POS_X;
+    public static final ModConfigSpec.IntValue HUD_POS_Y;
 
     static {
         BUILDER.push("HUD Settings");
@@ -44,6 +46,14 @@ public class HudConfigScreen {
         HUD_SCALE = BUILDER
                 .comment("HUD scale factor")
                 .defineInRange("hudScale", 1.0, 0.5, 3.0);
+
+        HUD_POS_X = BUILDER
+                .comment("HUD X position")
+                .defineInRange("hudPosX", 3, 0, 1000);
+
+        HUD_POS_Y = BUILDER
+                .comment("HUD Y position")
+                .defineInRange("hudPosY", 3, 0, 1000);
 
         BUILDER.pop();
         SPEC = BUILDER.build();
