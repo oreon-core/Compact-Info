@@ -11,10 +11,10 @@ base {
 }
 
 loom {
-
+    
     splitEnvironmentSourceSets()
 
-
+   
     mods {
         "compact-info" {
             sourceSet sourceSets.main
