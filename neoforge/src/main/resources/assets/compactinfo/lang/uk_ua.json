@@ -1,0 +1,16 @@
+{
+  "category.compactinfo": "Compact Info",
+  "key.compactinfo.toggle_hud": "Перемкнути HUD",
+  "key.compactinfo.open_hud_config": "Налаштування",
+  "hud.option.coords": "Показати координати",
+  "hud.option.converted": "Показати конвертовані координати",
+  "hud.option.biome": "Показати біом",
+  "hud.option.fps": "Показати FPS",
+  "hud.option.scale": "Масштаб HUD",
+  "screen.compactinfo.title": "Налаштування CompactInfo",
+  "modmenu.descriptionTranslation.compact-info": "Компактне відображення F3",
+  "hud.option.days": "Показати дні",
+  "hud.option.memory": "Показати ОЗУ",
+  "mod.compactinfo.name": "Compact Info",
+  "mod.compactinfo.description": "Легкий мод HUD, що відображає координати, біом, FPS та інше"
+}

@@ -1,0 +1,16 @@
+{
+  "category.compactinfo": "Compact Info",
+  "key.compactinfo.toggle_hud": "Toggle HUD",
+  "key.compactinfo.open_hud_config": "Config",
+  "hud.option.coords": "Show Coordinates",
+  "hud.option.converted": "Show Converted Coordinates",
+  "hud.option.biome": "Show Biome",
+  "hud.option.fps": "Show FPS",
+  "hud.option.scale": "HUD Scale",
+  "screen.compactinfo.title": "CompactInfo Configuration",
+  "modmenu.descriptionTranslation.compact-info": "Compact F3 display",
+  "hud.option.days": "Show Days",
+  "hud.option.memory": "Show RAM",
+  "mod.compactinfo.name": "Compact Info",
+  "mod.compactinfo.description": "A lightweight HUD mod displaying coordinates, biome, FPS, and more"
+}
