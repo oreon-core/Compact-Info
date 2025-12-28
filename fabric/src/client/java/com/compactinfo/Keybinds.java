@@ -2,18 +2,37 @@ package com.compactinfo;
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+
 public final class Keybinds {
     private static KeyBinding toggleHudKey;
     private static KeyBinding openHudConfigKey;
 
 
+    private static Boolean hasClothConfig = null;
+
+
     private static final KeyBinding.Category COMPACTINFO_CATEGORY =
             KeyBinding.Category.create(Identifier.of("compactinfo", "keybind_category"));
+
+    private static boolean checkClothConfigAvailable() {
+        if (hasClothConfig == null) {
+            try {
+                Class.forName("me.shedaniel.clothconfig2.api.ConfigBuilder");
+                hasClothConfig = true;
+            } catch (ClassNotFoundException e) {
+                hasClothConfig = false;
+            }
+        }
+        return hasClothConfig;
+    }
+
     public static void register() {
+
         toggleHudKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "key.compactinfo.toggle_hud",
                 InputUtil.Type.KEYSYM,
@@ -28,17 +47,39 @@ public final class Keybinds {
                 COMPACTINFO_CATEGORY
         ));
 
-
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
+
             while (toggleHudKey.wasPressed()) {
                 HudOverlay.toggle();
             }
 
             while (openHudConfigKey.wasPressed()) {
-                MinecraftClient.getInstance().setScreen(
-                        new HudConfigScreen(MinecraftClient.getInstance().currentScreen)
-                );
+                if (client.player != null) {
+                    handleConfigScreen(client);
+                }
             }
         });
+    }
+
+    private static void handleConfigScreen(MinecraftClient client) {
+        if (checkClothConfigAvailable()) {
+            try {
+
+                client.setScreen(HudConfigScreen.createConfigScreen(client.currentScreen));
+            } catch (Exception e) {
+                showMissingDependencyMessage(client);
+            }
+        } else {
+            showMissingDependencyMessage(client);
+        }
+    }
+
+    private static void showMissingDependencyMessage(MinecraftClient client) {
+        if (client.player != null) {
+            client.player.sendMessage(
+                    Text.literal("§cCompactInfo requires Cloth Config to open configuration screen!"),
+                    false
+            );
+        }
     }
 }
