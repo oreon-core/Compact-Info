@@ -3,7 +3,7 @@ package com.compactinfo;
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
 
-public class ModMenuIntegration implements ModMenuApi {
+public class   ModMenuIntegration implements ModMenuApi {
 
     private static boolean checkClothConfigAvailable() {
         try {
