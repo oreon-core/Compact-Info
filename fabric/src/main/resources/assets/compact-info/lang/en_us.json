@@ -23,5 +23,19 @@
   "hud.alignment.bottom_left": "Bottom Left",
   "hud.option.posX": "Horizontal Pos",
   "hud.option.posY": "Vertical Pos",
-  "hud.option.alignment": "Alignment"
+  "hud.option.layout": "Aligment",
+  "hud.layout.top_left": "Top Left",
+  "hud.layout.top_center": "Top Center",
+  "hud.layout.top_right": "Top Right",
+  "hud.layout.bottom_left": "Bottom Left",
+  "hud.layout.bottom_center": "Bottom Center",
+  "hud.layout.bottom_right": "Bottom Right",
+  "hud.layout.auto": "Automatic",
+  "hud.option.opacity": "Opacity",
+  "hud.option.surfacey": "Surface Y",
+  "hud.option.yaw": "Yaw",
+  "hud.option.pitch": "Pitch",
+  "hud.option.facing": "Facing Direction",
+  "hud.option.chunk": "Chunk Info",
+  "hud.option.hostile": "Hostiles"
 }
