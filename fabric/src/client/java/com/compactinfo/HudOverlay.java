@@ -4,8 +4,12 @@ import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderTickCounter;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
+import net.minecraft.world.WorldProperties;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,6 +23,10 @@ public class HudOverlay {
     private static final long MEMORY_UPDATE_INTERVAL = 50;
     private static String cachedMemoryText = "RAM: 0MB";
 
+    private static long lastHostileUpdateTime = 0;
+    private static final long HOSTILE_UPDATE_INTERVAL = 500;
+    private static int cachedHostileCount = 0;
+
     private static final int SCREEN_PADDING = 3;
 
     @SuppressWarnings("deprecation")
@@ -30,14 +38,22 @@ public class HudOverlay {
         enabled = !enabled;
     }
 
+    public static boolean isEnabled() {
+        return enabled;
+    }
+
     private static void render(DrawContext ctx, RenderTickCounter tickCounter) {
         if (!enabled || client.player == null || client.world == null || client.options.hudHidden) return;
 
         HudSettings settings = HudSettings.getInstance();
         float scale = settings.getHudScale();
 
-        int hudPosX = settings.getHudPosX();
-        int hudPosY = settings.getHudPosY();
+        int screenWidth = client.getWindow().getScaledWidth();
+        int screenHeight = client.getWindow().getScaledHeight();
+
+       
+        int hudPosX = settings.getHudPosX(screenWidth);
+        int hudPosY = settings.getHudPosY(screenHeight);
 
         double xi = client.player.getX();
         double yi = client.player.getY();
@@ -58,9 +74,23 @@ public class HudOverlay {
                 ? String.format("O: %.0f %.0f %.0f", xi * 8.0, yi, zi * 8.0)
                 : "Dim: " + client.world.getRegistryKey().getValue().getPath();
 
-        int color = 0xFFFFFFFF;
-        int screenWidth = client.getWindow().getScaledWidth();
-        int screenHeight = client.getWindow().getScaledHeight();
+       
+        int surfaceY = getSurfaceY(client.player.getBlockPos());
+        float yaw = client.player.getYaw();
+        float pitch = client.player.getPitch();
+        String dir = getDirectionAbbreviation(yaw);
+        int chunkX = (int) Math.floor(xi / 16.0);
+        int chunkZ = (int) Math.floor(zi / 16.0);
+
+       
+        int opacityPercent = settings.getOpacity();
+        int alpha;
+        if (opacityPercent == 0) {
+            alpha = 0;
+        } else {
+            alpha = Math.max(30, (int) (opacityPercent * 2.55f));
+        }
+        int color = (alpha << 24) | 0x00FFFFFF;
 
         int effectiveMinX = SCREEN_PADDING;
         int effectiveMaxX = screenWidth - SCREEN_PADDING;
@@ -69,28 +99,78 @@ public class HudOverlay {
 
         List<String> lines = new ArrayList<>();
 
+       
         if (settings.showCoords()) {
-            lines.add((int) xi + " " + (int) yi + " " + (int) zi);
+            StringBuilder coordsLine = new StringBuilder();
+            coordsLine.append((int) xi).append(" ").append((int) yi).append(" ").append((int) zi);
+
+            if (settings.showFacing()) {
+                coordsLine.append(" Dir: ").append(dir);
+            }
+
+            lines.add(coordsLine.toString());
+        } else if (settings.showFacing()) {
+            lines.add("Dir: " + dir);
         }
 
+       
+        if (settings.showYaw() || settings.showPitch()) {
+            StringBuilder yawPitchLine = new StringBuilder();
+            if (settings.showYaw()) {
+                yawPitchLine.append("Yaw: ").append(String.format("%.1f°", yaw));
+            }
+            if (settings.showPitch()) {
+                if (!yawPitchLine.isEmpty()) {
+                    yawPitchLine.append(", ");
+                }
+                yawPitchLine.append("Pitch: ").append(String.format("%.1f°", pitch));
+            }
+            lines.add(yawPitchLine.toString());
+        }
+
+       
+        if (settings.showSurfaceY()) {
+            lines.add("Surf: " + surfaceY);
+        }
+
+       
+        if (settings.showChunk()) {
+            lines.add("Chunk: " + chunkX + " " + chunkZ);
+        }
+
+       
+        if (settings.showHostile()) {
+            long currentTime = System.currentTimeMillis();
+            if (currentTime - lastHostileUpdateTime > HOSTILE_UPDATE_INTERVAL) {
+                updateHostileCount();
+                lastHostileUpdateTime = currentTime;
+            }
+            lines.add("Hos: " + cachedHostileCount);
+        }
+
+       
         if (settings.showConv()) {
             lines.add(conv);
         }
 
+       
         if (settings.showBiome()) {
             lines.add("B: " + biome);
         }
 
+       
         if (settings.showDays()) {
-            long time = client.world.getTimeOfDay();
-            long days = time / 24000L;
+            long totalWorldTime = getTotalWorldTime();
+            long days = totalWorldTime / 24000L;
             lines.add("Day: " + days);
         }
 
+       
         if (settings.showFPS()) {
             lines.add("FPS: " + fps);
         }
 
+       
         if (settings.showMemory()) {
             long currentTime = System.currentTimeMillis();
             if (currentTime - lastMemoryUpdateTime > MEMORY_UPDATE_INTERVAL) {
@@ -102,7 +182,14 @@ public class HudOverlay {
 
         if (lines.isEmpty()) return;
 
-        int zone = determineZone(hudPosX, hudPosY, effectiveMinX, effectiveMaxX, effectiveMinY, effectiveMaxY);
+       
+        int zone;
+        int layout = settings.getHudLayout();
+        if (layout >= 0 && layout <= 5) {
+            zone = layout + 1;
+        } else {
+            zone = determineZone(hudPosX, hudPosY, effectiveMinX, effectiveMaxX, effectiveMinY, effectiveMaxY);
+        }
 
         AlignmentType alignment = getAlignmentForZone(zone);
         boolean reverseOrder = isReversedOrderForZone(zone);
@@ -132,6 +219,76 @@ public class HudOverlay {
         }
     }
 
+    private static void updateHostileCount() {
+        if (client.player == null || client.world == null) {
+            cachedHostileCount = 0;
+            return;
+        }
+
+        Box searchBox = new Box(
+                client.player.getX() - 16, client.player.getY() - 16, client.player.getZ() - 16,
+                client.player.getX() + 16, client.player.getY() + 16, client.player.getZ() + 16
+        );
+
+        List<Entity> entities = client.world.getOtherEntities(client.player, searchBox, entity ->
+                entity instanceof HostileEntity
+        );
+
+        cachedHostileCount = entities.size();
+    }
+
+    private static int getSurfaceY(BlockPos playerPos) {
+        BlockPos groundPos = client.world.getTopPosition(
+                net.minecraft.world.Heightmap.Type.MOTION_BLOCKING,
+                new BlockPos(playerPos.getX(), 0, playerPos.getZ())
+        );
+        return groundPos.getY();
+    }
+
+    private static String getDirectionAbbreviation(float yaw) {
+        float normalizedYaw = yaw % 360;
+        if (normalizedYaw < 0) {
+            normalizedYaw += 360;
+        }
+
+        if (normalizedYaw >= 337.5 || normalizedYaw < 22.5) {
+            return "S";
+        } else if (normalizedYaw >= 22.5 && normalizedYaw < 67.5) {
+            return "SW";
+        } else if (normalizedYaw >= 67.5 && normalizedYaw < 112.5) {
+            return "W";
+        } else if (normalizedYaw >= 112.5 && normalizedYaw < 157.5) {
+            return "NW";
+        } else if (normalizedYaw >= 157.5 && normalizedYaw < 202.5) {
+            return "N";
+        } else if (normalizedYaw >= 202.5 && normalizedYaw < 247.5) {
+            return "NE";
+        } else if (normalizedYaw >= 247.5 && normalizedYaw < 292.5) {
+            return "E";
+        } else {
+            return "SE";
+        }
+    }
+
+    private static long getTotalWorldTime() {
+        try {
+            if (client.world != null) {
+                WorldProperties worldProperties = client.world.getLevelProperties();
+                if (worldProperties != null) {
+                    return worldProperties.getTime();
+                }
+            }
+
+            if (client.world != null) {
+                return client.world.getTime();
+            }
+
+            return client.world != null ? client.world.getTimeOfDay() : 0;
+        } catch (Exception e) {
+            return client.world != null ? client.world.getTimeOfDay() : 0;
+        }
+    }
+
     private static void updateMemoryText() {
         Runtime runtime = Runtime.getRuntime();
         long totalMemory = runtime.totalMemory();
@@ -157,7 +314,7 @@ public class HudOverlay {
         int normalizedX = x - minX;
         int normalizedY = y - minY;
 
-        int zone;
+        int zone = 0;
 
         if (normalizedX < thirdWidth) {
             zone = 1;
@@ -222,15 +379,9 @@ public class HudOverlay {
         int x = baseX;
 
         switch (alignment) {
-            case CENTER:
-                x -= textWidth / 2;
-                break;
-            case RIGHT:
-                x -= textWidth;
-                break;
-            case LEFT:
-            default:
-                break;
+            case CENTER -> x -= textWidth / 2;
+            case RIGHT -> x -= textWidth;
+            default -> {}
         }
 
         if (x < minX) {

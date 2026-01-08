@@ -23,6 +23,18 @@
   "hud.alignment.bottom_left": "Знизу зліва",
   "hud.option.posX": "Горизонтальна позиція",
   "hud.option.posY": "Вертикальна позиція",
-  "hud.option.alignment": "Вирівнювання"
-
+  "hud.option.layout": "Вирівнювання",
+  "hud.layout.top_left": "Верх-Ліво",
+  "hud.layout.top_center": "Верх-Центр",
+  "hud.layout.top_right": "Верх-Право",
+  "hud.layout.bottom_left": "Низ-Ліво",
+  "hud.layout.bottom_center": "Низ-Центр",
+  "hud.layout.bottom_right": "Низ-Право",
+  "hud.layout.auto": "Автоматично",
+  "hud.option.opacity": "Прозорість",
+  "hud.option.surfacey": "Висота поверхні",
+  "hud.option.yaw": "Поворот",
+  "hud.option.pitch": "Нахил",
+  "hud.option.facing": "Напрямок",
+  "hud.option.chunk": "Чанк інфо"
 }
