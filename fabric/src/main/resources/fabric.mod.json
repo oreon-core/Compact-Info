@@ -8,6 +8,8 @@
     "oreon core"
   ],
   "contact": {
+    "homepage": "https://modrinth.com/mod/compact-info",
+    "issues": "https://github.com/oreon-core/Compact-Info/issues",
     "sources": "https://github.com/oreon-core/Compact-Info"
   },
   "license": "MIT",
