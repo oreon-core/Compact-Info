@@ -1,5 +1,7 @@
 package com.compactinfo;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -14,7 +16,7 @@ import net.minecraft.world.WorldProperties;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
+@Environment(EnvType.CLIENT)
 public class HudOverlay {
     private static final MinecraftClient client = MinecraftClient.getInstance();
     private static boolean enabled = true;
