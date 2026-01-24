@@ -2,7 +2,10 @@ package com.compactinfo;
 
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
+import net.fabricmc.api.Environment;
+import net.fabricmc.api.EnvType;
 
+@Environment(EnvType.CLIENT)
 public class ModMenuIntegration implements ModMenuApi {
 
     private static boolean checkClothConfigAvailable() {

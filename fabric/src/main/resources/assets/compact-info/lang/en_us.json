@@ -37,5 +37,6 @@
   "hud.option.pitch": "Pitch",
   "hud.option.facing": "Facing Direction",
   "hud.option.chunk": "Chunk Info",
-  "hud.option.hostile": "Hostiles"
+  "hud.option.hostile": "Hostiles",
+  "subcategory.compactinfo.indicators": "Indicators"
 }

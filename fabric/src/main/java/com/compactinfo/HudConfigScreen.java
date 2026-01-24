@@ -2,11 +2,14 @@ package com.compactinfo;
 
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
+@Environment(EnvType.CLIENT)
 public class HudConfigScreen {
 
     public static Screen createConfigScreen(Screen parent) {
@@ -23,7 +26,7 @@ public class HudConfigScreen {
         int minY = padding;
         int maxY = screenHeight - padding;
 
-       
+
         int currentPosX = cfg.getHudPosX(screenWidth);
         int currentPosY = cfg.getHudPosY(screenHeight);
 
@@ -32,7 +35,7 @@ public class HudConfigScreen {
                 .setTitle(Text.translatable("screen.compactinfo.title"));
 
         builder.setSavingRunnable(() -> {
-           
+
             cfg.save();
         });
 
@@ -40,126 +43,133 @@ public class HudConfigScreen {
         var entryBuilder = ConfigEntryBuilder.create();
 
        
-        category.addEntry(entryBuilder
+        var indicatorsSubCategory = builder.entryBuilder()
+                .startSubCategory(Text.translatable("subcategory.compactinfo.indicators"));
+
+       
+        indicatorsSubCategory.add(entryBuilder
                 .startBooleanToggle(Text.translatable("hud.option.coords"), cfg.showCoords())
                 .setDefaultValue(true)
                 .setSaveConsumer(cfg::setShowCoords)
                 .build());
 
-       
-        category.addEntry(entryBuilder
+        indicatorsSubCategory.add(entryBuilder
                 .startBooleanToggle(Text.translatable("hud.option.yaw"), cfg.showYaw())
                 .setDefaultValue(false)
                 .setSaveConsumer(cfg::setShowYaw)
                 .build());
 
-        category.addEntry(entryBuilder
+        indicatorsSubCategory.add(entryBuilder
                 .startBooleanToggle(Text.translatable("hud.option.pitch"), cfg.showPitch())
                 .setDefaultValue(false)
                 .setSaveConsumer(cfg::setShowPitch)
                 .build());
 
-        category.addEntry(entryBuilder
+        indicatorsSubCategory.add(entryBuilder
                 .startBooleanToggle(Text.translatable("hud.option.facing"), cfg.showFacing())
                 .setDefaultValue(false)
                 .setSaveConsumer(cfg::setShowFacing)
                 .build());
 
-       
-        category.addEntry(entryBuilder
+
+        indicatorsSubCategory.add(entryBuilder
                 .startBooleanToggle(Text.translatable("hud.option.surfacey"), cfg.showSurfaceY())
                 .setDefaultValue(false)
                 .setSaveConsumer(cfg::setShowSurfaceY)
                 .build());
 
-       
-        category.addEntry(entryBuilder
+
+        indicatorsSubCategory.add(entryBuilder
                 .startBooleanToggle(Text.translatable("hud.option.chunk"), cfg.showChunk())
                 .setDefaultValue(false)
                 .setSaveConsumer(cfg::setShowChunk)
                 .build());
 
-       
-        category.addEntry(entryBuilder
+
+        indicatorsSubCategory.add(entryBuilder
                 .startBooleanToggle(Text.translatable("hud.option.hostile"), cfg.showHostile())
                 .setDefaultValue(false)
                 .setSaveConsumer(cfg::setShowHostile)
                 .build());
 
-       
-        category.addEntry(entryBuilder
+
+        indicatorsSubCategory.add(entryBuilder
                 .startBooleanToggle(Text.translatable("hud.option.converted"), cfg.showConv())
                 .setDefaultValue(false)
                 .setSaveConsumer(cfg::setShowConv)
                 .build());
 
-       
-        category.addEntry(entryBuilder
+
+        indicatorsSubCategory.add(entryBuilder
                 .startBooleanToggle(Text.translatable("hud.option.biome"), cfg.showBiome())
                 .setDefaultValue(false)
                 .setSaveConsumer(cfg::setShowBiome)
                 .build());
 
-       
-        category.addEntry(entryBuilder
+
+        indicatorsSubCategory.add(entryBuilder
                 .startBooleanToggle(Text.translatable("hud.option.days"), cfg.showDays())
                 .setDefaultValue(false)
                 .setSaveConsumer(cfg::setShowDays)
                 .build());
 
-       
-        category.addEntry(entryBuilder
+
+        indicatorsSubCategory.add(entryBuilder
                 .startBooleanToggle(Text.translatable("hud.option.fps"), cfg.showFPS())
                 .setDefaultValue(true)
                 .setSaveConsumer(cfg::setShowFPS)
                 .build());
 
-       
-        category.addEntry(entryBuilder
+
+        indicatorsSubCategory.add(entryBuilder
                 .startBooleanToggle(Text.translatable("hud.option.memory"), cfg.showMemory())
                 .setDefaultValue(false)
                 .setSaveConsumer(cfg::setShowMemory)
                 .build());
 
        
+        category.addEntry(indicatorsSubCategory.build());
+
+       
+
         category.addEntry(entryBuilder
                 .startIntSlider(Text.translatable("hud.option.posX"), currentPosX, minX, maxX)
                 .setDefaultValue(padding)
                 .setSaveConsumer(value -> {
-                   
+
                     MinecraftClient mc = MinecraftClient.getInstance();
                     int currentScreenWidth = mc.getWindow().getScaledWidth();
                     int currentScreenHeight = mc.getWindow().getScaledHeight();
 
-                   
+
                     int currentY = cfg.getHudPosY(currentScreenHeight);
 
-                   
+
                     cfg.setHudPosition(value, currentY, currentScreenWidth, currentScreenHeight);
                 })
                 .setTextGetter(value -> Text.literal(value + "px"))
                 .build());
 
-       
+
         category.addEntry(entryBuilder
                 .startIntSlider(Text.translatable("hud.option.posY"), currentPosY, minY, maxY)
                 .setDefaultValue(padding)
                 .setSaveConsumer(value -> {
-                   
+
                     MinecraftClient mc = MinecraftClient.getInstance();
                     int currentScreenWidth = mc.getWindow().getScaledWidth();
                     int currentScreenHeight = mc.getWindow().getScaledHeight();
 
-                   
+
                     int currentX = cfg.getHudPosX(currentScreenWidth);
 
-                   
+
                     cfg.setHudPosition(currentX, value, currentScreenWidth, currentScreenHeight);
                 })
                 .setTextGetter(value -> Text.literal(value + "px"))
                 .build());
 
-       
+
         category.addEntry(entryBuilder
                 .startIntSlider(Text.translatable("hud.option.scale"), (int)(cfg.getHudScale() * 10), 5, 30)
                 .setDefaultValue(10)
@@ -167,7 +177,7 @@ public class HudConfigScreen {
                 .setTextGetter(value -> Text.literal(String.format("%.1fx", value / 10.0f)))
                 .build());
 
-       
+
         category.addEntry(entryBuilder
                 .startIntSlider(Text.translatable("hud.option.layout"), cfg.getHudLayout(), 0, 6)
                 .setDefaultValue(6)
@@ -186,7 +196,7 @@ public class HudConfigScreen {
                 })
                 .build());
 
-       
+
         category.addEntry(entryBuilder
                 .startIntSlider(Text.translatable("hud.option.opacity"), cfg.getOpacity(), 0, 100)
                 .setDefaultValue(100)
