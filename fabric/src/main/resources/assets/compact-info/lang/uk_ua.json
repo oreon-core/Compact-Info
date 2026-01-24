@@ -36,5 +36,6 @@
   "hud.option.yaw": "Поворот",
   "hud.option.pitch": "Нахил",
   "hud.option.facing": "Напрямок",
-  "hud.option.chunk": "Чанк інфо"
+  "hud.option.chunk": "Чанк інфо",
+  "subcategory.compactinfo.indicators": "Індикатори"
 }
