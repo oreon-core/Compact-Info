@@ -10,13 +10,13 @@ import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 public class CompactInfo {
     public static final String MOD_ID = "compactinfo";
 
-    // Флаг наявності Cloth Config
+
     private static boolean clothConfigAvailable = false;
 
     public CompactInfo(ModContainer modContainer) {
         modContainer.registerConfig(ModConfig.Type.CLIENT, HudConfigScreen.SPEC);
 
-        // Перевірка наявності Cloth Config
+
         checkClothConfig();
 
         registerConfigScreen();
